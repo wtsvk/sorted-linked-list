@@ -17,22 +17,18 @@ class SortedLinkedList extends LinkedList
 
         if ($this->head === null || $this->tail === null) {
             $this->head = $node;
-            $this->tail = $node;
+            $this->tail = $this->findTailNode();
             return;
         }
 
         $current = $this->head;
 
         while ($current instanceof ComparableNode) {
-            if ($current->compareTo($node) < 0) {
-                $current->setNext($node);
+            if ($node->compareTo($current) < 0) {
+                $current->setPrev($node);
 
                 if ($node->getPrev() === null) {
                     $this->head = $node;
-                }
-
-                if ($node->getNext() === null) {
-                    $this->tail = $node;
                 }
 
                 return;
@@ -40,5 +36,8 @@ class SortedLinkedList extends LinkedList
 
             $current = $current->getNext();
         }
+
+        $this->tail->setNext($node);
+        $this->tail = $node;
     }
 }

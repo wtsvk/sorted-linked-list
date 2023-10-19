@@ -17,8 +17,11 @@ class LinkedList implements IteratorAggregate, JsonSerializable
     protected ?Node $head = null;
     protected ?Node $tail = null;
 
-    public function __construct()
+    public function __construct(?Node $head = null)
     {
+        if ($head instanceof Node) {
+            $this->insert($head);
+        }
     }
 
     public function getHead(): ?Node
@@ -35,12 +38,37 @@ class LinkedList implements IteratorAggregate, JsonSerializable
     {
         if ($this->head === null || $this->tail === null) {
             $this->head = $node;
-            $this->tail = $node;
+            $this->tail = $this->findTailNode();
             return;
         }
 
         $this->tail->setNext($node);
         $this->tail = $node;
+    }
+
+    public function split(Node $node): self
+    {
+        $this->tail = $node->getPrev();
+        return new self($node->split());
+    }
+
+    public function remove(Node $node): self
+    {
+        if ($node === $this->head) {
+            $this->head = $node->getNext();
+        }
+
+        if ($node === $this->tail) {
+            $this->tail = $node->getPrev();
+        }
+
+        $node->remove();
+        return $this;
+    }
+
+    public function count(): int
+    {
+        return iterator_count($this->getIterator());
     }
 
     public function getIterator(): Traversable
@@ -60,10 +88,18 @@ class LinkedList implements IteratorAggregate, JsonSerializable
     {
         $result = [];
 
-        foreach ($this as $node) {
+        foreach ($this->getIterator() as $node) {
             $result[] = $node->getData();
         }
 
         return $result;
+    }
+
+    protected function findTailNode(): ?Node
+    {
+        $nodes = iterator_to_array($this->getIterator());
+        $last = end($nodes);
+
+        return $last instanceof Node ? $last : null;
     }
 }
