@@ -1,8 +1,5 @@
 name: 🚀 Run tests of the library
-
-on:
-  push:
-  pull_request:
+on: push
 
 jobs:
   phpcs:
