@@ -78,6 +78,23 @@ final class LinkedListTest extends TestCase
         self::assertSame('["c","z","x"]', json_encode($list));
     }
 
+    #[DataProvider('provideLinkedList')]
+    public function testJoinLists(LinkedList $list): void
+    {
+        $list2 = new LinkedList();
+        $list2->insert(new StringNode('0'));
+        $list2->insert(new StringNode('d'));
+        $list2->insert(new StringNode('zz'));
+        $list->join($list2);
+
+        self::assertSame('["c","a","z","x","0","d","zz"]', json_encode($list));
+        self::assertSame('c', $list->getHead()?->getData());
+        self::assertSame('zz', $list->getTail()?->getData());
+
+        self::assertNull($list2->getHead());
+        self::assertNull($list2->getTail());
+    }
+
     /**
      * @param Node[] $nodes
      */

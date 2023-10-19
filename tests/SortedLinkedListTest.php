@@ -99,6 +99,23 @@ final class SortedLinkedListTest extends TestCase
         self::assertSame('["z"]', json_encode($list2));
     }
 
+    #[DataProvider('provideLinkedList')]
+    public function testJoinLists(SortedLinkedList $list): void
+    {
+        $list2 = new SortedLinkedList();
+        $list2->insert(new StringNode('0'));
+        $list2->insert(new StringNode('d'));
+        $list2->insert(new StringNode('zz'));
+        $list->join($list2);
+
+        self::assertSame('["0","a","c","d","x","z","zz"]', json_encode($list));
+        self::assertSame('0', $list->getHead()?->getData());
+        self::assertSame('zz', $list->getTail()?->getData());
+
+        self::assertNull($list2->getHead());
+        self::assertNull($list2->getTail());
+    }
+
     /**
      * @return iterable<array{list: SortedLinkedList, sortedNodes: Node[]}>
      */

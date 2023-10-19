@@ -56,7 +56,19 @@ class LinkedList implements IteratorAggregate, JsonSerializable
         return new self($node->split());
     }
 
-    public function remove(Node $node): self
+    public function join(self $linkedList): void
+    {
+        if ($this === $linkedList) {
+            throw new LinkedListException('Cannot join linked list with itself');
+        }
+
+        foreach(iterator_to_array($linkedList) as $node) {
+            $linkedList->remove($node);
+            $this->insert($node);
+        }
+    }
+
+    public function remove(Node $node): void
     {
         if ($node === $this->head) {
             $this->head = $node->getNext();
@@ -67,7 +79,6 @@ class LinkedList implements IteratorAggregate, JsonSerializable
         }
 
         $node->remove();
-        return $this;
     }
 
     public function count(): int
