@@ -6,6 +6,7 @@ namespace Wtsvk\SortedLinkedList\Test\Node;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Wtsvk\SortedLinkedList\LinkedListException;
 use Wtsvk\SortedLinkedList\Node\Node;
 use Wtsvk\SortedLinkedList\SortedLinkedList;
 use Wtsvk\SortedLinkedList\Node\Types\StringNode;
@@ -45,6 +46,57 @@ final class SortedLinkedListTest extends TestCase
     public function testJsonEncode(SortedLinkedList $list): void
     {
         self::assertSame('["a","c","x","z"]', json_encode($list));
+    }
+
+    /**
+     * @param Node[] $sortedNodes
+     */
+    #[DataProvider('provideLinkedList')]
+    public function testRemoveHead(SortedLinkedList $list, array $sortedNodes): void
+    {
+        $list->remove($sortedNodes[0]);
+        self::assertSame('["c","x","z"]', json_encode($list));
+    }
+
+    /**
+     * @param Node[] $sortedNodes
+     */
+    #[DataProvider('provideLinkedList')]
+    public function testRemoveTail(SortedLinkedList $list, array $sortedNodes): void
+    {
+        $list->remove($sortedNodes[3]);
+        self::assertSame('["a","c","x"]', json_encode($list));
+    }
+
+    /**
+     * @param Node[] $sortedNodes
+     */
+    #[DataProvider('provideLinkedList')]
+    public function testRemoveMiddleNode(SortedLinkedList $list, array $sortedNodes): void
+    {
+        $list->remove($sortedNodes[1]);
+        self::assertSame('["a","x","z"]', json_encode($list));
+    }
+
+    /**
+     * @param Node[] $sortedNodes
+     */
+    #[DataProvider('provideLinkedList')]
+    public function testSplitHead(SortedLinkedList $list, array $sortedNodes): void
+    {
+        $this->expectException(LinkedListException::class);
+        $list->split($sortedNodes[0]);
+    }
+
+    /**
+     * @param Node[] $sortedNodes
+     */
+    #[DataProvider('provideLinkedList')]
+    public function testSplitTail(SortedLinkedList $list, array $sortedNodes): void
+    {
+        $list2 = $list->split($sortedNodes[3]);
+        self::assertSame('["a","c","x"]', json_encode($list));
+        self::assertSame('["z"]', json_encode($list2));
     }
 
     /**

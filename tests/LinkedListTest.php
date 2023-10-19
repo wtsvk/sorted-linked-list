@@ -7,6 +7,7 @@ namespace Wtsvk\SortedLinkedList\Test\Node;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Wtsvk\SortedLinkedList\LinkedList;
+use Wtsvk\SortedLinkedList\LinkedListException;
 use Wtsvk\SortedLinkedList\Node\Node;
 use Wtsvk\SortedLinkedList\Node\Types\StringNode;
 
@@ -45,6 +46,57 @@ final class LinkedListTest extends TestCase
     public function testJsonEncode(LinkedList $list): void
     {
         self::assertSame('["c","a","z","x"]', json_encode($list));
+    }
+
+    /**
+     * @param Node[] $nodes
+     */
+    #[DataProvider('provideLinkedList')]
+    public function testRemoveHead(LinkedList $list, array $nodes): void
+    {
+        $list->remove($nodes[0]);
+        self::assertSame('["a","z","x"]', json_encode($list));
+    }
+
+    /**
+     * @param Node[] $nodes
+     */
+    #[DataProvider('provideLinkedList')]
+    public function testRemoveTail(LinkedList $list, array $nodes): void
+    {
+        $list->remove($nodes[3]);
+        self::assertSame('["c","a","z"]', json_encode($list));
+    }
+
+    /**
+     * @param Node[] $nodes
+     */
+    #[DataProvider('provideLinkedList')]
+    public function testRemoveMiddleNode(LinkedList $list, array $nodes): void
+    {
+        $list->remove($nodes[1]);
+        self::assertSame('["c","z","x"]', json_encode($list));
+    }
+
+    /**
+     * @param Node[] $nodes
+     */
+    #[DataProvider('provideLinkedList')]
+    public function testSplitHead(LinkedList $list, array $nodes): void
+    {
+        $this->expectException(LinkedListException::class);
+        $list->split($nodes[0]);
+    }
+
+    /**
+     * @param Node[] $nodes
+     */
+    #[DataProvider('provideLinkedList')]
+    public function testSplitTail(LinkedList $list, array $nodes): void
+    {
+        $list2 = $list->split($nodes[3]);
+        self::assertSame('["c","a","z"]', json_encode($list));
+        self::assertSame('["x"]', json_encode($list2));
     }
 
     /**

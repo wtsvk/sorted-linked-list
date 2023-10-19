@@ -48,6 +48,10 @@ class LinkedList implements IteratorAggregate, JsonSerializable
 
     public function split(Node $node): self
     {
+        if ($node === $this->head) {
+            throw new LinkedListException('Cannot split head node');
+        }
+
         $this->tail = $node->getPrev();
         return new self($node->split());
     }
